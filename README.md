@@ -10,13 +10,21 @@ The installation and usage are very simple. Download the repository and convert 
 
 ## 🚀 Features
 Black background, white text
+
 Shortcut keys:
+
 Ctrl+S → Save
+
 Ctrl+C → Copy
+
 Ctrl+V → Paste
+
 Ctrl+X → Cut
+
 Ctrl++ → Increase text size
+
 Ctrl+- → Decrease text size
+
 Open/Edit files
 
 
