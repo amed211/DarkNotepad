@@ -16,7 +16,7 @@ from ctrl import bind_shortcuts
 class Notepad:
     def __init__(self, root, file_path=None):
         self.root = root
-        self.root.title("Not Defteri")
+        self.root.title("Note Pad")
         self.root.geometry("800x600")
         self.root.configure(bg="black")
         self.current_file = file_path
