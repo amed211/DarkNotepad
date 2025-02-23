@@ -16,10 +16,11 @@ from ctrl import bind_shortcuts
 class Notepad:
     def __init__(self, root, file_path=None):
         self.root = root
-        self.root.title("Note Pad")
-        self.root.geometry("800x600")
+        self.root.title("Not Defteri")
+        self.root.geometry("1000x500")
         self.root.configure(bg="black")
         self.current_file = file_path
+        self.root.attributes('-alpha', 0.75)
 
         self.text_area = tk.Text(self.root, wrap="word", undo=True, bg="black", fg="white", insertbackground="white", font=("Consolas", 12))
         self.text_area.pack(expand=1, fill="both")
@@ -29,8 +30,11 @@ class Notepad:
         self.scrollbar.config(command=self.text_area.yview)
         self.text_area.config(yscrollcommand=self.scrollbar.set)
 
+        self.opacity = 0.75
+
         self.create_menu()
         bind_shortcuts(self)
+        self.bind_opacity_shortcuts()
 
         if file_path:
             self.load_file(file_path)
@@ -42,12 +46,20 @@ class Notepad:
         file_menu.add_command(label="Save", command=self.save_file)
         file_menu.add_command(label="Save differently", command=self.save_as_file)
         file_menu.add_separator()
-        file_menu.add_command(label="Exit", command=self.root.quit)
+        file_menu.add_command(label="exit", command=self.root.quit)
         menubar.add_cascade(label="File", menu=file_menu)
         self.root.config(menu=menubar)
 
+    def bind_opacity_shortcuts(self):
+        self.root.bind_all("<Alt-plus>", lambda event: self.adjust_opacity(0.05))
+        self.root.bind_all("<Alt-minus>", lambda event: self.adjust_opacity(-0.05))
+
+    def adjust_opacity(self, change):
+        self.opacity = min(max(self.opacity + change, 0.2), 1.0)
+        self.root.attributes("-alpha", self.opacity)
+
     def open_file(self):
-        file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
+        file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
         if file_path:
             self.load_file(file_path)
             self.current_file = file_path
@@ -72,7 +84,7 @@ class Notepad:
                     content = self.text_area.get("1.0", tk.END)
                     file.write(content)
                 self.current_file = file_path
-                self.root.title(f"notepad - {file_path}")
+                self.root.title(f"Notepad - {file_path}")
             except Exception as e:
                 messagebox.showerror("Error", f"An error occurred while saving the file: {e}")
 
@@ -83,7 +95,7 @@ class Notepad:
                 self.text_area.delete("1.0", tk.END)
                 self.text_area.insert(tk.END, content)
         except Exception as e:
-            messagebox.showerror("error", f"An error occurred while uploading the file: {e}")
+            messagebox.showerror("Error", f"An error occurred while uploading the file: {e}")
 
 if __name__ == "__main__":
     file_path = sys.argv[1] if len(sys.argv) > 1 else None
