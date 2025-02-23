@@ -1,89 +1,92 @@
+###################################################################################
+#                                                                                 #
+#                                                                                 #
+#                    Alternative Notepad 📄                                       #
+#                                                                                 #
+#I am thinking of filling the other empty lines with the support of the community.#
+#                                                                                 #
+#                                                                                 #
+#                                                                                 #
+###################################################################################
 import tkinter as tk
 from tkinter import filedialog, messagebox
+import sys
+from ctrl import bind_shortcuts
 
-def open_file(event=None):
-    file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
-    if file_path:
+class Notepad:
+    def __init__(self, root, file_path=None):
+        self.root = root
+        self.root.title("Not Defteri")
+        self.root.geometry("800x600")
+        self.root.configure(bg="black")
+        self.current_file = file_path
+
+        self.text_area = tk.Text(self.root, wrap="word", undo=True, bg="black", fg="white", insertbackground="white", font=("Consolas", 12))
+        self.text_area.pack(expand=1, fill="both")
+
+        self.scrollbar = tk.Scrollbar(self.text_area, bg="gray", troughcolor="gray", activebackground="gray")
+        self.scrollbar.pack(side="right", fill="y")
+        self.scrollbar.config(command=self.text_area.yview)
+        self.text_area.config(yscrollcommand=self.scrollbar.set)
+
+        self.create_menu()
+        bind_shortcuts(self)
+
+        if file_path:
+            self.load_file(file_path)
+
+    def create_menu(self):
+        menubar = tk.Menu(self.root, bg="black", fg="white")
+        file_menu = tk.Menu(menubar, tearoff=0, bg="black", fg="white")
+        file_menu.add_command(label="Open", command=self.open_file)
+        file_menu.add_command(label="Save", command=self.save_file)
+        file_menu.add_command(label="Save differently", command=self.save_as_file)
+        file_menu.add_separator()
+        file_menu.add_command(label="Exit", command=self.root.quit)
+        menubar.add_cascade(label="File", menu=file_menu)
+        self.root.config(menu=menubar)
+
+    def open_file(self):
+        file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
+        if file_path:
+            self.load_file(file_path)
+            self.current_file = file_path
+            self.root.title(f"Notepad - {file_path}")
+
+    def save_file(self):
+        if self.current_file:
+            try:
+                with open(self.current_file, "w", encoding="utf-8") as file:
+                    content = self.text_area.get("1.0", tk.END)
+                    file.write(content)
+            except Exception as e:
+                messagebox.showerror("Error", f"An error occurred while saving the file: {e}")
+        else:
+            self.save_as_file()
+
+    def save_as_file(self):
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
+        if file_path:
+            try:
+                with open(file_path, "w", encoding="utf-8") as file:
+                    content = self.text_area.get("1.0", tk.END)
+                    file.write(content)
+                self.current_file = file_path
+                self.root.title(f"notepad - {file_path}")
+            except Exception as e:
+                messagebox.showerror("Error", f"An error occurred while saving the file: {e}")
+
+    def load_file(self, file_path):
         try:
             with open(file_path, "r", encoding="utf-8") as file:
-                text_area.delete("1.0", tk.END)
-                text_area.insert(tk.END, file.read())
-            root.title(f"ANote Pathe - {file_path}")
+                content = file.read()
+                self.text_area.delete("1.0", tk.END)
+                self.text_area.insert(tk.END, content)
         except Exception as e:
-            messagebox.showerror("Error", f"File could not be openedFile could not be opened: {e}")
+            messagebox.showerror("error", f"An error occurred while uploading the file: {e}")
 
-def save_file(event=None):
-    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
-    if file_path:
-        try:
-            with open(file_path, "w", encoding="utf-8") as file:
-                file.write(text_area.get("1.0", tk.END))
-            root.title(f"ANote Pathe - {file_path}")
-        except Exception as e:
-            messagebox.showerror("Eror", f"File could not be savedFile could not be saved: {e}")
-
-def new_file(event=None):
-    text_area.delete("1.0", tk.END)
-    root.title(Notepad - New File)
-
-def exit_app(event=None):
-    if messagebox.askokcancel("Exit", "Are you sure you want to exit the programAre you sure you want to exit the program?"):
-        root.destroy()
-
-def zoom_in(event=None):
-    global font_size
-    font_size += 2
-    text_area.config(font=("Consolas", font_size))
-
-def zoom_out(event=None):
-    global font_size
-    if font_size > 6:
-        font_size -= 2
-        text_area.config(font=("Consolas", font_size))
-
-def reset_zoom(event=None):
-    global font_size
-    font_size = default_font_size
-    text_area.config(font=("Consolas", font_size))
-
-root = tk.Tk()
-root.title("Not Defteri")
-root.geometry("900x500")
-root.configure(bg="gray20")
-
-default_font_size = 14
-font_size = default_font_size
-
-menu_bar = tk.Menu(root, bg="black", fg="white", activebackground="gray", activeforeground="black", bd=0)
-file_menu = tk.Menu(menu_bar, tearoff=0, bg="black", fg="white", activebackground="gray", activeforeground="black")
-file_menu.add_command(label="New (Ctrl+N)", command=new_file)
-file_menu.add_command(label="Open (Ctrl+O)", command=open_file)
-file_menu.add_command(label="Save (Ctrl+S)", command=save_file)
-file_menu.add_separator()
-file_menu.add_command(label="Exit (Ctrl+Q)", command=exit_app)
-menu_bar.add_cascade(label="File", menu=file_menu)
-root.config(menu=menu_bar)
-
-frame = tk.Frame(root, bg="gray20")
-frame.pack(fill="both", expand=True)
-
-text_area = tk.Text(frame, bg="black", fg="white", insertbackground="white", undo=True, wrap="word", bd=0, relief="flat", font=("Consolas", font_size))
-text_area.pack(side="left", fill="both", expand=True)
-
-scrollbar = tk.Scrollbar(frame, bg="black", troughcolor="gray20", activebackground="gray", bd=0)
-scrollbar.pack(side="right", fill="y")
-scrollbar.config(command=text_area.yview, troughcolor="gray20", bg="gray")
-text_area.config(yscrollcommand=scrollbar.set)
-
-root.bind("<Control-s>", save_file)
-root.bind("<Control-o>", open_file)
-root.bind("<Control-n>", new_file)
-root.bind("<Control-q>", exit_app)
-root.bind("<Control-plus>", zoom_in)   # Ctrl + +
-root.bind("<Control-minus>", zoom_out) # Ctrl + -
-root.bind("<Control-0>", reset_zoom)   # Ctrl + 0
-text_area.bind("<Control-x>", lambda e: text_area.event_generate("<<Cut>>"))
-text_area.bind("<Control-c>", lambda e: text_area.event_generate("<<Copy>>"))
-text_area.bind("<Control-v>", lambda e: text_area.event_generate("<<Paste>>"))
-
-root.mainloop()
+if __name__ == "__main__":
+    file_path = sys.argv[1] if len(sys.argv) > 1 else None
+    root = tk.Tk()
+    app = Notepad(root, file_path)
+    root.mainloop()
