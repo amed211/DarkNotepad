@@ -10,6 +10,8 @@ The installation and usage are very simple. Download the repository and convert 
 you don't have to press Ctrl+O to open a file. Simply right-click on the file you want to open, select 'Open with,' choose 'Select another app,' and then select Dark Notepad.exe that's it
 
 ## 🚀 Features
+25% transparency to reduce eye strain
+
 Black background, white text
 
 Shortcut keys:
@@ -25,6 +27,10 @@ Ctrl+X → Cut
 Ctrl++ → Increase text size
 
 Ctrl+- → Decrease text size
+
+Alt++ → increases opacity
+
+Alt+- → increases transparency
 
 Open/Edit files
 
