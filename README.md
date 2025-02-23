@@ -27,5 +27,8 @@ Ctrl+- → Decrease text size
 
 Open/Edit files
 
+## My Personal Opinion 🧠
 
-## Thank you in advance to everyone who will contribute to my first project🎉🎉
+In my opinion there should have been a notepad application with an eye friendly dark theme Microsoft has never shown the necessary attention to the Windows Notepad application and it has remained outdated far behind the times This led to the emergence of alternative applications one of which is Dark Notepad This code is open source and anyone can add features to Dark Notepad and improve it further I would like to thank everyone who contributes code in advance
+
+## Thank you in advance to everyone who will contribute to my first project🎉✨
